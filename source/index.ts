@@ -12,12 +12,12 @@ class SciParser {
   readonly tokens: ret.Root = null;
   readonly charset: number[];
 
-  constructor(regex: string | RegExp, charset?: string) {
-    if (regex instanceof RegExp) {
-      regex = regex.source;
+  constructor(sci: string | RegExp, charset?: string) {
+    if (sci instanceof RegExp) {
+      sci = sci.source;
     }
 
-    if (/[(][?]</.test(regex) === true) {
+    if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
     }
 
@@ -25,7 +25,7 @@ class SciParser {
       charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     }
 
-    this.tokens = ret(regex);
+    this.tokens = ret(sci);
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
   }
 
@@ -234,6 +234,6 @@ class SciParser {
   }
 }
 
-export = (regex: string | RegExp, charset?: string) => {
-  return new SciParser(regex, charset);
+export = (sci: string | RegExp, charset?: string) => {
+  return new SciParser(sci, charset);
 };
