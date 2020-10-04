@@ -1,6 +1,6 @@
-import genex from '../source';
+import SciParser from '../source';
 
-describe('genex', () => {
+describe('SciParser', () => {
   let charset = ' *+,-./0123456789_abcdefghijklmnopqrstuvwxyz';
   let patterns = [
     // =========================================================================
@@ -129,17 +129,17 @@ describe('genex', () => {
       if (typeof pattern.out === 'string') {
         describe(`count()`, () => {
           it(`should throw ${pattern.out}`, () => {
-            expect(() => genex(pattern.in, charset).count()).toThrow();
+            expect(() => SciParser(pattern.in, charset).count()).toThrow();
           });
         });
 
         describe(`generate()`, () => {
           it(`should throw ${pattern.out}`, () => {
-            expect(() => genex(pattern.in, charset).generate()).toThrow();
+            expect(() => SciParser(pattern.in, charset).generate()).toThrow();
           });
         });
       } else {
-        let instance = genex(pattern.in, charset);
+        let instance = SciParser(pattern.in, charset);
 
         describe(`count()`, () => {
           let count = typeof pattern.out === 'number' ? pattern.out : pattern.out.length;

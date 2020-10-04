@@ -8,7 +8,7 @@ import { Reference } from './iterators/Reference';
 import { Repetition } from './iterators/Repetition';
 import { Stack } from './iterators/Stack';
 
-class Genex {
+class SciParser {
   readonly tokens: ret.Root = null;
   readonly charset: number[];
 
@@ -235,5 +235,5 @@ class Genex {
 }
 
 export = (regex: string | RegExp, charset?: string) => {
-  return new Genex(regex, charset);
+  return new SciParser(regex, charset);
 };
