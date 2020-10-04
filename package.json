@@ -16,6 +16,7 @@
     "build": "tsc",
     "postversion": "git push && git push --tags && npm publish",
     "test": "jest",
+    "test-watch": "jest --watch",
     "version": "git add -A ."
   },
   "dependencies": {
