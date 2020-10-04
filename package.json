@@ -1,12 +1,12 @@
 {
-  "name": "genex",
+  "name": "sci-parser",
   "private": false,
-  "version": "1.1.0",
+  "version": "1.0.0",
   "author": {
-    "name": "Alix Axel"
+    "name": "Martín Schiaffino"
   },
   "license": "MIT",
-  "description": "Genex module for JavaScript",
+  "description": "SCI parser based on Genex module (by Alix Axel)",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -29,18 +29,12 @@
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333"
   },
-  "bugs": {
-    "url": "https://github.com/alixaxel/genex.js/issues"
-  },
-  "homepage": "https://github.com/alixaxel/genex.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/alixaxel/genex.js.git"
+    "url": "git://github.com/mschiaffino/sci-parser.git"
   },
   "keywords": [
-    "genex",
-    "regex",
-    "regular expressions"
+    "sci"
   ],
   "jest": {
     "roots": [
