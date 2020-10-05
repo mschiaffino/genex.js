@@ -1,6 +1,6 @@
 import SciParser from '../source';
 
-describe('tests kept from genex', () => {
+describe.skip('tests kept from genex', () => {
   let charset = ' *+,-./0123456789_abcdefghijklmnopqrstuvwxyz';
   let patterns = [
     // =========================================================================
