@@ -12,7 +12,8 @@
     "rootDir": "source",
     "strictFunctionTypes": true,
     "strictNullChecks": false,
-    "target": "es6"
+    "target": "es6",
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "exclude": ["node_modules", "tests"],
