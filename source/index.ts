@@ -100,7 +100,7 @@ class SciParser {
           }
         }
 
-        let count = counter(tokens.value);
+        const count = counter(tokens.value);
 
         if (tokens.max === null) {
           return Infinity;
@@ -132,7 +132,7 @@ class SciParser {
   }
 
   generate(callback?: (value: string) => boolean | void) {
-    let groups: Stack[] = [];
+    const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
       if (tokens.type === ret.types.ROOT || tokens.type === ret.types.GROUP) {
@@ -164,7 +164,7 @@ class SciParser {
 
         for (let stack of tokens.set) {
           if (stack.type === ret.types.SET) {
-            let data = [];
+            const data = [];
 
             for (let node of stack.set) {
               if (node.type === ret.types.RANGE) {
@@ -214,7 +214,7 @@ class SciParser {
       return new Literal([]);
     };
 
-    let values = generator(this.tokens) as Option | Stack;
+    const values = generator(this.tokens) as Option | Stack;
 
     if (typeof callback === 'function') {
       for (let value of values) {
@@ -226,7 +226,7 @@ class SciParser {
       return null;
     }
 
-    let result = [];
+    const result = [];
 
     for (let value of values) {
       result.push(value);

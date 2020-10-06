@@ -1,7 +1,7 @@
 import SciParser from '../source';
 
 describe('sci parser', () => {
-  let scis = [
+  const scis = [
     {
       input: 'O.C',
       validSequences: ['OC'],
