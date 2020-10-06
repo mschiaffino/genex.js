@@ -11,6 +11,8 @@ import { Stack } from './iterators/Stack';
 class SciParser {
   readonly tokens: ret.Root = null;
   readonly charset: number[];
+  // TODO Calculate max repetitions based on coverage params
+  private readonly MAX_REPETITIONS = 2;
 
   constructor(sci: string | RegExp, charset?: string) {
     if (sci instanceof RegExp) {
@@ -25,7 +27,7 @@ class SciParser {
       charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     }
 
-    this.tokens = ret(sci);
+    this.tokens = ret(this._removeDots(sci));
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
   }
 
@@ -198,7 +200,7 @@ class SciParser {
           }
         }
 
-        return Repetition(generator(tokens.value), tokens.min, tokens.max);
+        return Repetition(generator(tokens.value), tokens.min, tokens.max || this.MAX_REPETITIONS);
       } else if (tokens.type === ret.types.REFERENCE) {
         if (groups.hasOwnProperty(tokens.value - 1) !== true) {
           throw new Error(`Reference to non-existent capture group.`);
@@ -231,6 +233,25 @@ class SciParser {
     }
 
     return result;
+  }
+
+  sciIsValid(): boolean {
+    // TODO implement validation
+    return false;
+  }
+
+  generateValidSequences(coverageN?: number): string[] {
+    // TODO Use parameter
+    return this.generate();
+  }
+
+  generateInvalidSequences(coverageN: number): string[] {
+    // TODO implement invalid sequencees generation
+    return [];
+  }
+
+  private _removeDots(sci: string): string {
+    return sci.replace(/\./g, '');
   }
 }
 
