@@ -18,6 +18,22 @@ describe('sci parser', () => {
       // TODO add invalid sequences
       invalidSequences: [],
     },
+    {
+      input: 'Open.Close',
+      validSequences: ['OpenClose'],
+      invalidSequences: ['CloseOpen'],
+    },
+    {
+      input: 'Select|Move',
+      validSequences: ['Select', 'Move'],
+      invalidSequences: [],
+    },
+    {
+      input: 'Op.(Sel|Mov).Clo',
+      validSequences: ['OpSelClo', 'OpMovClo'],
+      // TODO add invalid sequences
+      invalidSequences: [],
+    },
   ];
 
   for (let sci of scis) {
