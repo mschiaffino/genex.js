@@ -17,6 +17,7 @@
     "postversion": "git push && git push --tags && npm publish",
     "test": "jest",
     "test-watch": "jest --watch",
+    "test-watch-all": "jest --watchAll",
     "version": "git add -A ."
   },
   "dependencies": {
@@ -39,7 +40,7 @@
   ],
   "jest": {
     "roots": [
-      "tests/"
+      "./"
     ],
     "testRegex": "[.]test[.]tsx?$",
     "transform": {
