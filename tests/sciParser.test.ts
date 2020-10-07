@@ -123,10 +123,6 @@ describe('sci parser', () => {
           }
         }
       });
-
-      describe.skip(`generateInvalidSequences()`, () => {
-        // TODO test invalid sequences
-      });
     });
   }
 });
