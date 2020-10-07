@@ -12,12 +12,14 @@ class SciParser {
   readonly operators = ['.', '|', '+', '*', '(', ')'];
   readonly charset: number[];
   readonly tokens: ret.Root = null;
-  readonly sci: string = null;
+  readonly rawSci: string = null;
+  readonly sciRegex: RegExp = null;
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
   constructor(sci: string, charset?: string) {
-    this.sci = sci;
+    this.rawSci = sci;
+    this.sciRegex = new RegExp(this._removeDots(sci));
 
     if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
@@ -26,8 +28,7 @@ class SciParser {
     if (charset == null) {
       charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     }
-
-    this.tokens = ret(this._removeDots(sci));
+    this.tokens = ret(this.sciRegex.source);
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
   }
 
@@ -149,7 +150,7 @@ class SciParser {
   getInteractionSymbols(): string[] {
     const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
     const regexToSplitByOps = new RegExp(joinedOperators);
-    return this.sci.split(regexToSplitByOps).filter((s) => s !== '');
+    return this.rawSci.split(regexToSplitByOps).filter((s) => s !== '');
   }
 
   private _generate(callback?: (value: string) => boolean | void) {
@@ -250,7 +251,7 @@ class SciParser {
     const result = [];
 
     for (let value of values) {
-      result.push(value);
+      result.push(this._addDots(value));
     }
 
     return result;
@@ -258,6 +259,10 @@ class SciParser {
 
   private _removeDots(sci: string): string {
     return sci.replace(/\./g, '');
+  }
+
+  private _addDots(s: string) {
+    return s.split(/(?=[A-Z])/).join('.');
   }
 }
 

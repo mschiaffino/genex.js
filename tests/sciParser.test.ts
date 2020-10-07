@@ -16,8 +16,8 @@ describe('sci parser', () => {
       validCoverageN: null,
       invalidCoverageN: 2,
       symbols: ['O', 'C'],
-      validSequences: ['OC'],
-      invalidSequences: ['O', 'C', 'CO'],
+      validSequences: ['O.C'],
+      invalidSequences: ['O', 'C', 'C.O'],
     },
     {
       sci: 'S|M',
@@ -32,7 +32,7 @@ describe('sci parser', () => {
       validCoverageN: null,
       invalidCoverageN: 2,
       symbols: ['O', 'S', 'M', 'C'],
-      validSequences: ['OSC', 'OMC'],
+      validSequences: ['O.S.C', 'O.M.C'],
       invalidSequences: [
         'O',
         'S',
@@ -61,8 +61,8 @@ describe('sci parser', () => {
       validCoverageN: null,
       invalidCoverageN: 2,
       symbols: ['Open', 'Close'],
-      validSequences: ['OpenClose'],
-      invalidSequences: ['Open', 'Close', 'CloseOpen'],
+      validSequences: ['Open.Close'],
+      invalidSequences: ['Open', 'Close', 'Close.Open'],
     },
     {
       sci: 'Select|Move',
@@ -77,7 +77,7 @@ describe('sci parser', () => {
       validCoverageN: null,
       invalidCoverageN: 1,
       symbols: ['Op', 'Sel', 'Mov', 'Clo'],
-      validSequences: ['OpSelClo', 'OpMovClo'],
+      validSequences: ['Op.Sel.Clo', 'Op.Mov.Clo'],
       invalidSequences: ['Op', 'Sel', 'Mov', 'Clo'],
     },
   ];
@@ -100,7 +100,7 @@ describe('sci parser', () => {
 
         if (validSequences.toString() !== '') {
           for (let value of validSequences) {
-            const regex = new RegExp(tp.sci.replace(/\./g, ''));
+            const regex = new RegExp(tp.sci.replace(/\./g, '\\.'));
             it(`'${value}' should match ${regex}`, () => {
               expect(regex.test(value)).toBeTruthy();
             });
