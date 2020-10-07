@@ -84,17 +84,17 @@ describe('sci parser', () => {
 
   for (let tp of testParams) {
     describe(`${tp.sci}`, () => {
-      const instance = SciParser(tp.sci);
-      const validSequences = instance.generateValidSequences();
-      const invalidSequences = instance.generateInvalidSequences(tp.invalidCoverageN);
+      const instance = new SciParser(tp.sci);
+      const validSequences = instance.validSequences();
+      const invalidSequences = instance.invalidSequences(tp.invalidCoverageN);
 
       describe('getInteractionSymbols()', () => {
         it(`should get symbols ${tp.symbols}`, () => {
-          expect(instance.getInteractionSymbols()).toEqual(tp.symbols);
+          expect(SciParser.getInteractionSymbols(tp.sci)).toEqual(tp.symbols);
         });
       });
 
-      describe(`generateValidSequences()`, () => {
+      describe(`validSequences()`, () => {
         it(`should generate [${tp.validSequences.join(', ')}]`, () => {
           expect(validSequences).toEqual(tp.validSequences);
         });
@@ -109,7 +109,7 @@ describe('sci parser', () => {
         }
       });
 
-      describe(`generateInvalidSequences()`, () => {
+      describe(`invalidSequences()`, () => {
         it(`should generate [${tp.invalidSequences.join(', ')}]`, () => {
           expect(invalidSequences).toEqual(tp.invalidSequences);
         });

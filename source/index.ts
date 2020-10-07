@@ -8,53 +8,67 @@ import { Reference } from './iterators/Reference';
 import { Repetition } from './iterators/Repetition';
 import { Stack } from './iterators/Stack';
 
-class SciParser {
-  readonly operators = ['.', '|', '+', '*', '(', ')'];
+export default class SciParser {
+  static readonly operators = ['.', '|', '+', '*', '(', ')'];
   readonly interactionSymbols: string[] = [];
   readonly charset: number[];
   readonly rawSci: string = null;
   readonly sciRegex: RegExp = null;
+  readonly sciRegexEscapedDots: RegExp = null;
+  readonly symbols: string[] = [];
   readonly tokensValidSequences: ret.Root = null;
+  readonly tokensInvalidSequences: ret.Root = null;
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
   constructor(sci: string, charset?: string) {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this._removeDots(sci));
+    this.sciRegexEscapedDots = new RegExp(sci.replace(/\./g, '\\.'));
+    this.symbols = SciParser.getInteractionSymbols(sci);
 
     if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
     }
 
+    const chartsetString =
+      ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     if (charset == null) {
       charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     }
-    this.tokensValidSequences = ret(this.sciRegex.source);
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
+    this.tokensValidSequences = ret(this.sciRegex.source);
+    const disjunctionOfSymbols = `(${this.symbols.join('|')})+`;
+    this.tokensInvalidSequences = ret(disjunctionOfSymbols);
   }
 
-  sciIsValid(): boolean {
+  static getInteractionSymbols(sci: string): string[] {
+    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
+    const regexToSplitByOps = new RegExp(joinedOperators);
+    return sci.split(regexToSplitByOps).filter((s) => s !== '');
+  }
+
+  static interactionsCount(sequence: string) {
+    return sequence.split('.').length;
+  }
+
+  public sciIsValid(): boolean {
     // TODO implement validation
     return false;
   }
 
-  generateValidSequences(coverageN?: number): string[] {
+  public validSequences(coverageN?: number): string[] {
     // TODO Use parameter
-    return this._generate(this.tokensValidSequences);
+    return this.generate(this.tokensValidSequences);
   }
 
-  generateInvalidSequences(coverageN: number): string[] {
-    const interactionsCount = (sequence: string) => sequence.split('.').length;
-    const sequenceIsInvalid = (sequence: string) => !new RegExp(this.rawSci.replace(/\./g, '\\.')).test(sequence);
-
-    const symbols = this.getInteractionSymbols();
-    const invalidRegex = `(${symbols.join('|')})+`;
-    const allCombinations = this._generate(ret(invalidRegex));
-
-    return allCombinations.filter((c) => interactionsCount(c) <= coverageN).filter((s) => sequenceIsInvalid(s));
+  public invalidSequences(coverageN: number): string[] {
+    return this.generate(this.tokensInvalidSequences)
+      .filter((c) => SciParser.interactionsCount(c) <= coverageN)
+      .filter((s) => !this.isValidSequence(s));
   }
 
-  count() {
+  public count() {
     let groups = 0;
 
     const counter = (tokens: ret.Tokens) => {
@@ -154,13 +168,11 @@ class SciParser {
     return counter(this.tokensValidSequences);
   }
 
-  getInteractionSymbols(): string[] {
-    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
-    const regexToSplitByOps = new RegExp(joinedOperators);
-    return this.rawSci.split(regexToSplitByOps).filter((s) => s !== '');
+  public isValidSequence(sequence: string) {
+    return this.sciRegexEscapedDots.test(sequence);
   }
 
-  private _generate(tokens: ret.Tokens, callback?: (value: string) => boolean | void) {
+  private generate(tokens: ret.Tokens, callback?: (value: string) => boolean | void) {
     const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
@@ -272,7 +284,3 @@ class SciParser {
     return s.split(/(?=[A-Z])/).join('.');
   }
 }
-
-export = (sci: string, charset?: string) => {
-  return new SciParser(sci, charset);
-};
