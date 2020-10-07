@@ -25,7 +25,7 @@ export default class SciParser {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this._removeDots(sci));
     this.sciRegexEscapedDots = new RegExp(sci.replace(/\./g, '\\.'));
-    this.symbols = SciParser.getInteractionSymbols(sci);
+    this.symbols = SciParser.interactionSymbols(sci);
 
     if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
@@ -39,7 +39,7 @@ export default class SciParser {
     this.tokensInvalidSequences = ret(`(${this.symbols.join('|')})+`);
   }
 
-  static getInteractionSymbols(sci: string): string[] {
+  static interactionSymbols(sci: string): string[] {
     const isNotEmptyString = (s: string) => s !== '';
 
     const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');

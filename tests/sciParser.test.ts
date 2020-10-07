@@ -98,7 +98,7 @@ describe('sci parser', () => {
 
       describe('getInteractionSymbols()', () => {
         it(`should get symbols ${tp.symbols}`, () => {
-          expect(SciParser.getInteractionSymbols(tp.sci)).toEqual(tp.symbols);
+          expect(SciParser.interactionSymbols(tp.sci)).toEqual(tp.symbols);
         });
       });
 
