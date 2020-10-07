@@ -11,13 +11,13 @@ import { Stack } from './iterators/Stack';
 class SciParser {
   readonly tokens: ret.Root = null;
   readonly charset: number[];
+  readonly sci: string = null;
+  readonly operators = ['.', '|', '+', '*', '(', ')'];
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
-  constructor(sci: string | RegExp, charset?: string) {
-    if (sci instanceof RegExp) {
-      sci = sci.source;
-    }
+  constructor(sci: string, charset?: string) {
+    this.sci = sci;
 
     if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
@@ -146,6 +146,12 @@ class SciParser {
     return counter(this.tokens);
   }
 
+  getInteractionSymbols(): string[] {
+    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
+    const regexToSplitByOps = new RegExp(joinedOperators);
+    return this.sci.split(regexToSplitByOps).filter((s) => s !== '');
+  }
+
   private _generate(callback?: (value: string) => boolean | void) {
     const groups: Stack[] = [];
 
@@ -255,6 +261,6 @@ class SciParser {
   }
 }
 
-export = (sci: string | RegExp, charset?: string) => {
+export = (sci: string, charset?: string) => {
   return new SciParser(sci, charset);
 };

@@ -4,6 +4,7 @@ type TestParams = {
   sci: string;
   validCoverageN: number | null;
   invalidCoverageN: number | null;
+  symbols: string[];
   validSequences: string[];
   invalidSequences: string[];
 };
@@ -14,6 +15,7 @@ describe('sci parser', () => {
       sci: 'O.C',
       validCoverageN: null,
       invalidCoverageN: 2,
+      symbols: ['O', 'C'],
       validSequences: ['OC'],
       invalidSequences: ['O', 'C', 'CO'],
     },
@@ -21,6 +23,7 @@ describe('sci parser', () => {
       sci: 'S|M',
       validCoverageN: null,
       invalidCoverageN: 1,
+      symbols: ['S', 'M'],
       validSequences: ['S', 'M'],
       invalidSequences: [],
     },
@@ -28,6 +31,7 @@ describe('sci parser', () => {
       sci: 'O.(S|M).C',
       validCoverageN: null,
       invalidCoverageN: 2,
+      symbols: ['O', 'S', 'M', 'C'],
       validSequences: ['OSC', 'OMC'],
       invalidSequences: [
         'O',
@@ -56,6 +60,7 @@ describe('sci parser', () => {
       sci: 'Open.Close',
       validCoverageN: null,
       invalidCoverageN: 2,
+      symbols: ['Open', 'Close'],
       validSequences: ['OpenClose'],
       invalidSequences: ['Open', 'Close', 'CloseOpen'],
     },
@@ -63,6 +68,7 @@ describe('sci parser', () => {
       sci: 'Select|Move',
       validCoverageN: null,
       invalidCoverageN: 1,
+      symbols: ['Select', 'Move'],
       validSequences: ['Select', 'Move'],
       invalidSequences: [],
     },
@@ -70,6 +76,7 @@ describe('sci parser', () => {
       sci: 'Op.(Sel|Mov).Clo',
       validCoverageN: null,
       invalidCoverageN: 1,
+      symbols: ['Op', 'Sel', 'Mov', 'Clo'],
       validSequences: ['OpSelClo', 'OpMovClo'],
       invalidSequences: ['Op', 'Sel', 'Mov', 'Clo'],
     },
@@ -79,6 +86,12 @@ describe('sci parser', () => {
     describe(`${tp.sci}`, () => {
       const instance = SciParser(tp.sci);
       const validSequences = instance.generateValidSequences();
+
+      describe('getInteractionSymbols()', () => {
+        it(`should get symbols ${tp.symbols}`, () => {
+          expect(instance.getInteractionSymbols()).toEqual(tp.symbols);
+        });
+      });
 
       describe(`generateValidSequences()`, () => {
         it(`should generate ${tp.validSequences.join(', ')}`, () => {
