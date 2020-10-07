@@ -31,6 +31,21 @@ class SciParser {
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
   }
 
+  sciIsValid(): boolean {
+    // TODO implement validation
+    return false;
+  }
+
+  generateValidSequences(coverageN?: number): string[] {
+    // TODO Use parameter
+    return this._generate();
+  }
+
+  generateInvalidSequences(coverageN: number): string[] {
+    // TODO implement invalid sequencees generation
+    return [];
+  }
+
   count() {
     let groups = 0;
 
@@ -131,7 +146,7 @@ class SciParser {
     return counter(this.tokens);
   }
 
-  generate(callback?: (value: string) => boolean | void) {
+  private _generate(callback?: (value: string) => boolean | void) {
     const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
@@ -233,21 +248,6 @@ class SciParser {
     }
 
     return result;
-  }
-
-  sciIsValid(): boolean {
-    // TODO implement validation
-    return false;
-  }
-
-  generateValidSequences(coverageN?: number): string[] {
-    // TODO Use parameter
-    return this.generate();
-  }
-
-  generateInvalidSequences(coverageN: number): string[] {
-    // TODO implement invalid sequencees generation
-    return [];
   }
 
   private _removeDots(sci: string): string {
