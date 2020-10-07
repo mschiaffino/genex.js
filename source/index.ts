@@ -68,7 +68,7 @@ export default class SciParser {
 
   public invalidSequences(coverageN: number): string[] {
     return this.generate(this.tokensInvalidSequences)
-      .filter((c) => SciParser.interactionsCount(c) <= coverageN)
+      .filter((s) => SciParser.interactionsCount(s) <= coverageN)
       .filter((s) => !this.isValidSequence(s));
   }
 
