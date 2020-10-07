@@ -9,10 +9,10 @@ import { Repetition } from './iterators/Repetition';
 import { Stack } from './iterators/Stack';
 
 class SciParser {
-  readonly tokens: ret.Root = null;
-  readonly charset: number[];
-  readonly sci: string = null;
   readonly operators = ['.', '|', '+', '*', '(', ')'];
+  readonly charset: number[];
+  readonly tokens: ret.Root = null;
+  readonly sci: string = null;
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
