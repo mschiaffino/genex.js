@@ -96,8 +96,8 @@ describe('sci parser', () => {
       const validSequences = instance.validSequences();
       const invalidSequences = instance.invalidSequences(tp.invalidCoverageN);
 
-      describe('getInteractionSymbols()', () => {
-        it(`should get symbols ${tp.symbols}`, () => {
+      describe('interactionSymbols()', () => {
+        it(`should get symbols [${tp.symbols.join(', ')}]`, () => {
           expect(SciParser.interactionSymbols(tp.sci)).toEqual(tp.symbols);
         });
       });
