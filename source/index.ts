@@ -21,7 +21,7 @@ export default class SciParser {
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
-  constructor(sci: string, charset?: string) {
+  constructor(sci: string) {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this._removeDots(sci));
     this.sciRegexEscapedDots = new RegExp(sci.replace(/\./g, '\\.'));
@@ -31,15 +31,12 @@ export default class SciParser {
       throw new Error(`Unsupported lookbehind assertion.`);
     }
 
-    const chartsetString =
-      ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-    if (charset == null) {
-      charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-    }
-    this.charset = charset.split('').map((value) => value.charCodeAt(0));
+    this.charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
+      .split('')
+      .map((value) => value.charCodeAt(0));
+
     this.tokensValidSequences = ret(this.sciRegex.source);
-    const disjunctionOfSymbols = `(${this.symbols.join('|')})+`;
-    this.tokensInvalidSequences = ret(disjunctionOfSymbols);
+    this.tokensInvalidSequences = ret(`(${this.symbols.join('|')})+`);
   }
 
   static getInteractionSymbols(sci: string): string[] {
