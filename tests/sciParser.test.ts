@@ -1,4 +1,4 @@
-import SciParser from '../source';
+import { SciParser } from '../source';
 
 type TestParams = {
   sci: string;
