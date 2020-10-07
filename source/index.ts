@@ -42,7 +42,8 @@ export default class SciParser {
   static getInteractionSymbols(sci: string): string[] {
     const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
     const regexToSplitByOps = new RegExp(joinedOperators);
-    return sci.split(regexToSplitByOps).filter((s) => s !== '');
+    const isNotEmptyString = (s: string) => s !== '';
+    return sci.split(regexToSplitByOps).filter(isNotEmptyString);
   }
 
   static interactionsCount(sequence: string) {
