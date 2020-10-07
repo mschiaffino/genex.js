@@ -20,6 +20,14 @@ describe('sci parser', () => {
       invalidSequences: ['O', 'O.O', 'C', 'C.O', 'C.C'],
     },
     {
+      sci: 'O.Z.Z.C',
+      validCoverageN: null,
+      invalidCoverageN: 2,
+      symbols: ['O', 'Z', 'C'],
+      validSequences: ['O.Z.Z.C'],
+      invalidSequences: ['O', 'O.O', 'O.Z', 'O.C', 'Z', 'Z.O', 'Z.Z', 'Z.C', 'C', 'C.O', 'C.Z', 'C.C'],
+    },
+    {
       sci: 'S|M',
       validCoverageN: null,
       invalidCoverageN: 1,

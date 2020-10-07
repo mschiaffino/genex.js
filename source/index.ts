@@ -40,10 +40,17 @@ export default class SciParser {
   }
 
   static getInteractionSymbols(sci: string): string[] {
+    const isNotEmptyString = (s: string) => s !== '';
+
     const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
     const regexToSplitByOps = new RegExp(joinedOperators);
-    const isNotEmptyString = (s: string) => s !== '';
-    return sci.split(regexToSplitByOps).filter(isNotEmptyString);
+
+    const hash: { [s: string]: boolean } = {};
+    sci.split(regexToSplitByOps).forEach((s) => (hash[s] = true));
+
+    const distinctSymbols: string[] = Object.keys(hash);
+
+    return distinctSymbols.filter(isNotEmptyString);
   }
 
   static interactionsCount(sequence: string) {
