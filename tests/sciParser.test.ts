@@ -95,7 +95,7 @@ describe('sci parser', () => {
         }
       });
 
-      describe.skip(`generateValidSequences()`, () => {
+      describe.skip(`generateInvalidSequences()`, () => {
         // TODO test invalid sequences
       });
     });
