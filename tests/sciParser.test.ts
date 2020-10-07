@@ -1,54 +1,93 @@
 import SciParser from '../source';
 
+type TestParams = {
+  sci: string;
+  validCoverageN: number | null;
+  invalidCoverageN: number | null;
+  validSequences: string[];
+  invalidSequences: string[];
+};
+
 describe('sci parser', () => {
-  const scis = [
+  const testParams: TestParams[] = [
     {
-      input: 'O.C',
+      sci: 'O.C',
+      validCoverageN: null,
+      invalidCoverageN: 2,
       validSequences: ['OC'],
-      invalidSequences: ['CO'],
+      invalidSequences: ['O', 'C', 'CO'],
     },
     {
-      input: 'S|M',
+      sci: 'S|M',
+      validCoverageN: null,
+      invalidCoverageN: 1,
       validSequences: ['S', 'M'],
       invalidSequences: [],
     },
     {
-      input: 'O.(S|M).C',
+      sci: 'O.(S|M).C',
+      validCoverageN: null,
+      invalidCoverageN: 2,
       validSequences: ['OSC', 'OMC'],
-      // TODO add invalid sequences
-      invalidSequences: [],
+      invalidSequences: [
+        'O',
+        'S',
+        'M',
+        'C',
+        'OO',
+        'OS',
+        'OM',
+        'OC',
+        'SO',
+        'SS',
+        'SM',
+        'SC',
+        'MO',
+        'MS',
+        'MM',
+        'MC',
+        'CO',
+        'CS',
+        'CM',
+        'CC',
+      ],
     },
     {
-      input: 'Open.Close',
+      sci: 'Open.Close',
+      validCoverageN: null,
+      invalidCoverageN: 2,
       validSequences: ['OpenClose'],
-      invalidSequences: ['CloseOpen'],
+      invalidSequences: ['Open', 'Close', 'CloseOpen'],
     },
     {
-      input: 'Select|Move',
+      sci: 'Select|Move',
+      validCoverageN: null,
+      invalidCoverageN: 1,
       validSequences: ['Select', 'Move'],
       invalidSequences: [],
     },
     {
-      input: 'Op.(Sel|Mov).Clo',
+      sci: 'Op.(Sel|Mov).Clo',
+      validCoverageN: null,
+      invalidCoverageN: 1,
       validSequences: ['OpSelClo', 'OpMovClo'],
-      // TODO add invalid sequences
-      invalidSequences: [],
+      invalidSequences: ['Op', 'Sel', 'Mov', 'Clo'],
     },
   ];
 
-  for (let sci of scis) {
-    describe(`${sci.input}`, () => {
-      const instance = SciParser(sci.input);
+  for (let tp of testParams) {
+    describe(`${tp.sci}`, () => {
+      const instance = SciParser(tp.sci);
       const validSequences = instance.generateValidSequences();
 
       describe(`generateValidSequences()`, () => {
-        it(`should generate ${sci.validSequences.join(', ')}`, () => {
-          expect(validSequences).toEqual(sci.validSequences);
+        it(`should generate ${tp.validSequences.join(', ')}`, () => {
+          expect(validSequences).toEqual(tp.validSequences);
         });
 
         if (validSequences.toString() !== '') {
           for (let value of validSequences) {
-            const regex = new RegExp(sci.input.replace(/\./g, ''));
+            const regex = new RegExp(tp.sci.replace(/\./g, ''));
             it(`'${value}' should match ${regex}`, () => {
               expect(regex.test(value)).toBeTruthy();
             });
