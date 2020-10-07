@@ -91,7 +91,7 @@ describe('sci parser', () => {
   ];
 
   for (let tp of testParams) {
-    describe(`${tp.sci}`, () => {
+    describe(`SCI: ${tp.sci}`, () => {
       const instance = new SciParser(tp.sci);
       const validSequences = instance.validSequences();
       const invalidSequences = instance.invalidSequences(tp.invalidCoverageN);
