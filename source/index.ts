@@ -10,7 +10,6 @@ import { Stack } from './iterators/Stack';
 
 export default class SciParser {
   static readonly operators = ['.', '|', '+', '*', '(', ')'];
-  readonly interactionSymbols: string[] = [];
   readonly charset: number[];
   readonly rawSci: string = null;
   readonly sciRegex: RegExp = null;
