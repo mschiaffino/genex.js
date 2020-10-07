@@ -10,10 +10,11 @@ import { Stack } from './iterators/Stack';
 
 class SciParser {
   readonly operators = ['.', '|', '+', '*', '(', ')'];
+  readonly interactionSymbols: string[] = [];
   readonly charset: number[];
-  readonly tokens: ret.Root = null;
   readonly rawSci: string = null;
   readonly sciRegex: RegExp = null;
+  readonly tokensValidSequences: ret.Root = null;
   // TODO Calculate max repetitions based on coverage params
   private readonly MAX_REPETITIONS = 2;
 
@@ -28,7 +29,7 @@ class SciParser {
     if (charset == null) {
       charset = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
     }
-    this.tokens = ret(this.sciRegex.source);
+    this.tokensValidSequences = ret(this.sciRegex.source);
     this.charset = charset.split('').map((value) => value.charCodeAt(0));
   }
 
@@ -39,12 +40,18 @@ class SciParser {
 
   generateValidSequences(coverageN?: number): string[] {
     // TODO Use parameter
-    return this._generate();
+    return this._generate(this.tokensValidSequences);
   }
 
   generateInvalidSequences(coverageN: number): string[] {
-    // TODO implement invalid sequencees generation
-    return [];
+    const interactionsCount = (sequence: string) => sequence.split('.').length;
+    const sequenceIsInvalid = (sequence: string) => !new RegExp(this.rawSci.replace(/\./g, '\\.')).test(sequence);
+
+    const symbols = this.getInteractionSymbols();
+    const invalidRegex = `(${symbols.join('|')})+`;
+    const allCombinations = this._generate(ret(invalidRegex));
+
+    return allCombinations.filter((c) => interactionsCount(c) <= coverageN).filter((s) => sequenceIsInvalid(s));
   }
 
   count() {
@@ -144,7 +151,7 @@ class SciParser {
       return isFinite(result) === true ? result : Infinity;
     };
 
-    return counter(this.tokens);
+    return counter(this.tokensValidSequences);
   }
 
   getInteractionSymbols(): string[] {
@@ -153,7 +160,7 @@ class SciParser {
     return this.rawSci.split(regexToSplitByOps).filter((s) => s !== '');
   }
 
-  private _generate(callback?: (value: string) => boolean | void) {
+  private _generate(tokens: ret.Tokens, callback?: (value: string) => boolean | void) {
     const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
@@ -236,7 +243,7 @@ class SciParser {
       return new Literal([]);
     };
 
-    const values = generator(this.tokens) as Option | Stack;
+    const values = generator(tokens) as Option | Stack;
 
     if (typeof callback === 'function') {
       for (let value of values) {

@@ -17,7 +17,7 @@ describe('sci parser', () => {
       invalidCoverageN: 2,
       symbols: ['O', 'C'],
       validSequences: ['O.C'],
-      invalidSequences: ['O', 'C', 'C.O'],
+      invalidSequences: ['O', 'O.O', 'C', 'C.O', 'C.C'],
     },
     {
       sci: 'S|M',
@@ -35,25 +35,25 @@ describe('sci parser', () => {
       validSequences: ['O.S.C', 'O.M.C'],
       invalidSequences: [
         'O',
+        'O.O',
+        'O.S',
+        'O.M',
+        'O.C',
         'S',
+        'S.O',
+        'S.S',
+        'S.M',
+        'S.C',
         'M',
+        'M.O',
+        'M.S',
+        'M.M',
+        'M.C',
         'C',
-        'OO',
-        'OS',
-        'OM',
-        'OC',
-        'SO',
-        'SS',
-        'SM',
-        'SC',
-        'MO',
-        'MS',
-        'MM',
-        'MC',
-        'CO',
-        'CS',
-        'CM',
-        'CC',
+        'C.O',
+        'C.S',
+        'C.M',
+        'C.C',
       ],
     },
     {
@@ -62,7 +62,7 @@ describe('sci parser', () => {
       invalidCoverageN: 2,
       symbols: ['Open', 'Close'],
       validSequences: ['Open.Close'],
-      invalidSequences: ['Open', 'Close', 'Close.Open'],
+      invalidSequences: ['Open', 'Open.Open', 'Close', 'Close.Open', 'Close.Close'],
     },
     {
       sci: 'Select|Move',
@@ -86,6 +86,7 @@ describe('sci parser', () => {
     describe(`${tp.sci}`, () => {
       const instance = SciParser(tp.sci);
       const validSequences = instance.generateValidSequences();
+      const invalidSequences = instance.generateInvalidSequences(tp.invalidCoverageN);
 
       describe('getInteractionSymbols()', () => {
         it(`should get symbols ${tp.symbols}`, () => {
@@ -94,15 +95,30 @@ describe('sci parser', () => {
       });
 
       describe(`generateValidSequences()`, () => {
-        it(`should generate ${tp.validSequences.join(', ')}`, () => {
+        it(`should generate [${tp.validSequences.join(', ')}]`, () => {
           expect(validSequences).toEqual(tp.validSequences);
         });
 
         if (validSequences.toString() !== '') {
-          for (let value of validSequences) {
+          for (let sequence of validSequences) {
             const regex = new RegExp(tp.sci.replace(/\./g, '\\.'));
-            it(`'${value}' should match ${regex}`, () => {
-              expect(regex.test(value)).toBeTruthy();
+            it(`'${sequence}' should match ${regex}`, () => {
+              expect(regex.test(sequence)).toBeTruthy();
+            });
+          }
+        }
+      });
+
+      describe(`generateInvalidSequences()`, () => {
+        it(`should generate [${tp.invalidSequences.join(', ')}]`, () => {
+          expect(invalidSequences).toEqual(tp.invalidSequences);
+        });
+
+        if (invalidSequences.toString() !== '') {
+          for (let sequence of invalidSequences) {
+            const regex = new RegExp(tp.sci.replace(/\./g, '\\.'));
+            it(`'${sequence}' should not match ${regex}`, () => {
+              expect(regex.test(sequence)).toBeFalsy();
             });
           }
         }
