@@ -42,9 +42,9 @@ export class SciParser {
   }
 
   public validSequences(coverageN: number = 0): string[] {
-    const shortestValidSequence = this.generate(this.tokensValidSequences, 0)[0];
+    const shortestValidSequence = this.generate(this.tokensValidSequences, 1)[0];
     const minValidSequenceLength: number = this.countInteractions(shortestValidSequence);
-    const maxRepetitions = coverageN ? coverageN - minValidSequenceLength + 1 : coverageN;
+    const maxRepetitions = coverageN ? coverageN - (minValidSequenceLength - 2) : coverageN;
     const maxValidSequenceLength = minValidSequenceLength + coverageN;
 
     return this.generate(this.tokensValidSequences, maxRepetitions)
@@ -62,7 +62,7 @@ export class SciParser {
   public isValidSequence(sequence: string) {
     // RESET LAST INDEX WHEN TESTING WITH REUSED REGEX WITH GLOBAL FLAG
     this.sciRegexEscapedDots.lastIndex = 0;
-    return this.sciRegexEscapedDots.test(sequence);
+    return this.sciRegexEscapedDots.test(this.removeDots(sequence));
   }
 
   private generate(tokens: ret.Tokens, maxRepetitions = 0, callback?: (value: string) => boolean | void) {
