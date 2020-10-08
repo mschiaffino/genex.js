@@ -20,7 +20,7 @@ export class SciParser {
 
   constructor(sci: string) {
     this.rawSci = sci;
-    this.sciRegex = new RegExp(this._removeDots(sci));
+    this.sciRegex = new RegExp(this.removeDots(sci));
     this.sciRegexEscapedDots = new RegExp('^' + sci.replace(/\./g, '\\.?') + '$', 'g');
     this.interactionSymbols = this.extractInteractionSymbols();
 
@@ -161,7 +161,7 @@ export class SciParser {
     const result = [];
 
     for (let value of values) {
-      result.push(this._addDots(value));
+      result.push(this.addDots(value));
     }
 
     return result;
@@ -185,11 +185,11 @@ export class SciParser {
     return sequence.split('.').length;
   }
 
-  private _removeDots(sci: string): string {
+  private removeDots(sci: string): string {
     return sci.replace(/\./g, '');
   }
 
-  private _addDots(s: string) {
+  private addDots(s: string) {
     return s.split(/(?=[A-Z])/).join('.');
   }
 }
