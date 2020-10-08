@@ -102,7 +102,7 @@ describe('sci parser', () => {
         });
       });
 
-      describe(`validSequences()`, () => {
+      describe(`validSequences(${tp.validCoverageN || ''})`, () => {
         it(`should generate [${tp.validSequences.join(', ')}]`, () => {
           expect(validSequences).toEqual(tp.validSequences);
         });
@@ -117,7 +117,7 @@ describe('sci parser', () => {
         }
       });
 
-      describe(`invalidSequences()`, () => {
+      describe(`invalidSequences(${tp.invalidCoverageN || ''})`, () => {
         it(`should generate [${tp.invalidSequences.join(', ')}]`, () => {
           expect(invalidSequences).toEqual(tp.invalidSequences);
         });
