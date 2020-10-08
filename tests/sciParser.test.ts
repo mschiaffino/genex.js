@@ -88,12 +88,23 @@ describe('sci parser', () => {
       validSequences: ['Op.Mov.Clo', 'Op.Sel.Clo'],
       invalidSequences: ['Clo', 'Mov', 'Op', 'Sel'],
     },
+    /**
+     * Quantifiers
+     */
+    {
+      sci: 'O.C*',
+      validCoverageN: 3,
+      invalidCoverageN: 2,
+      symbols: ['C', 'O'],
+      validSequences: ['O', 'O.C', 'O.C.C', 'O.C.C.C'],
+      invalidSequences: ['C', 'C.C', 'C.O', 'O.O'],
+    },
   ];
 
   for (let tp of testParams) {
     describe(`SCI: ${tp.sci}`, () => {
       const instance = new SciParser(tp.sci);
-      const validSequences = instance.validSequences();
+      const validSequences = instance.validSequences(tp.validCoverageN);
       const invalidSequences = instance.invalidSequences(tp.invalidCoverageN);
 
       describe('interactionSymbols', () => {
@@ -109,7 +120,7 @@ describe('sci parser', () => {
 
         if (validSequences.toString() !== '') {
           for (let sequence of validSequences) {
-            const regex = new RegExp(tp.sci.replace(/\./g, '\\.'));
+            const regex = new RegExp(tp.sci.replace(/\./g, '\\.?'));
             it(`'${sequence}' should match ${regex}`, () => {
               expect(regex.test(sequence)).toBeTruthy();
             });
@@ -124,7 +135,7 @@ describe('sci parser', () => {
 
         if (invalidSequences.toString() !== '') {
           for (let sequence of invalidSequences) {
-            const regex = new RegExp(tp.sci.replace(/\./g, '\\.'));
+            const regex = new RegExp('^' + tp.sci.replace(/\./g, '\\.') + '$', 'g');
             it(`'${sequence}' should not match ${regex}`, () => {
               expect(regex.test(sequence)).toBeFalsy();
             });

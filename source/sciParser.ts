@@ -17,13 +17,11 @@ export class SciParser {
   readonly interactionSymbols: string[] = [];
   readonly tokensValidSequences: ret.Root = null;
   readonly tokensInvalidSequences: ret.Root = null;
-  // TODO Calculate max repetitions based on coverage params
-  private readonly MAX_REPETITIONS = 2;
 
   constructor(sci: string) {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this._removeDots(sci));
-    this.sciRegexEscapedDots = new RegExp(sci.replace(/\./g, '\\.'));
+    this.sciRegexEscapedDots = new RegExp('^' + sci.replace(/\./g, '\\.?') + '$', 'g');
     this.interactionSymbols = this.extractInteractionSymbols();
 
     if (/[(][?]</.test(sci) === true) {
@@ -38,32 +36,36 @@ export class SciParser {
     this.tokensInvalidSequences = ret(`(${this.interactionSymbols.join('|')})+`);
   }
 
-  static interactionsCount(sequence: string) {
-    return sequence.split('.').length;
-  }
-
   public sciIsValid(): boolean {
     // TODO implement validation
     return false;
   }
 
-  public validSequences(coverageN?: number): string[] {
-    // TODO Use parameter
-    return this.generate(this.tokensValidSequences).sort(byInteractionsCountAndAlphabetically);
+  public validSequences(coverageN: number = 0): string[] {
+    const shortestValidSequence = this.generate(this.tokensValidSequences)[0];
+    const minValidSequenceLength: number = this.countInteractions(shortestValidSequence);
+    const maxRepetitions = coverageN ? coverageN - minValidSequenceLength + 1 : coverageN;
+    const maxValidSequenceLength = minValidSequenceLength + coverageN;
+
+    return this.generate(this.tokensValidSequences, maxRepetitions)
+      .filter((s) => this.countInteractions(s) <= maxValidSequenceLength)
+      .sort(byInteractionsCountAndAlphabetically);
   }
 
-  public invalidSequences(coverageN: number): string[] {
-    return this.generate(this.tokensInvalidSequences)
-      .filter((s) => SciParser.interactionsCount(s) <= coverageN)
+  public invalidSequences(coverageN: number = 1): string[] {
+    return this.generate(this.tokensInvalidSequences, coverageN)
       .filter((s) => !this.isValidSequence(s))
+      .filter((s) => this.countInteractions(s) <= coverageN)
       .sort(byInteractionsCountAndAlphabetically);
   }
 
   public isValidSequence(sequence: string) {
+    // RESET LAST INDEX WHEN TESTING WITH REUSED REGEX WITH GLOBAL FLAG
+    this.sciRegexEscapedDots.lastIndex = 0;
     return this.sciRegexEscapedDots.test(sequence);
   }
 
-  private generate(tokens: ret.Tokens, callback?: (value: string) => boolean | void) {
+  private generate(tokens: ret.Tokens, maxRepetitions = 0, callback?: (value: string) => boolean | void) {
     const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
@@ -132,7 +134,7 @@ export class SciParser {
           }
         }
 
-        return Repetition(generator(tokens.value), tokens.min, tokens.max || this.MAX_REPETITIONS);
+        return Repetition(generator(tokens.value), tokens.min, tokens.max || maxRepetitions);
       } else if (tokens.type === ret.types.REFERENCE) {
         if (groups.hasOwnProperty(tokens.value - 1) !== true) {
           throw new Error(`Reference to non-existent capture group.`);
@@ -154,8 +156,6 @@ export class SciParser {
           return null;
         }
       }
-
-      return null;
     }
 
     const result = [];
@@ -179,6 +179,10 @@ export class SciParser {
     const distinctSymbols: string[] = Object.keys(hash);
 
     return distinctSymbols.filter(isNotEmptyString).sort(byInteractionsCountAndAlphabetically);
+  }
+
+  private countInteractions(sequence: string) {
+    return sequence.split('.').length;
   }
 
   private _removeDots(sci: string): string {
