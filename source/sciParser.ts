@@ -49,7 +49,7 @@ export class SciParser {
 
     const distinctSymbols: string[] = Object.keys(hash);
 
-    return distinctSymbols.filter(isNotEmptyString);
+    return distinctSymbols.filter(isNotEmptyString).sort(byInteractionsCountAndAlphabetically);
   }
 
   static interactionsCount(sequence: string) {
@@ -63,13 +63,14 @@ export class SciParser {
 
   public validSequences(coverageN?: number): string[] {
     // TODO Use parameter
-    return this.generate(this.tokensValidSequences);
+    return this.generate(this.tokensValidSequences).sort(byInteractionsCountAndAlphabetically);
   }
 
   public invalidSequences(coverageN: number): string[] {
     return this.generate(this.tokensInvalidSequences)
       .filter((s) => SciParser.interactionsCount(s) <= coverageN)
-      .filter((s) => !this.isValidSequence(s));
+      .filter((s) => !this.isValidSequence(s))
+      .sort(byInteractionsCountAndAlphabetically);
   }
 
   public isValidSequence(sequence: string) {
@@ -188,3 +189,6 @@ export class SciParser {
     return s.split(/(?=[A-Z])/).join('.');
   }
 }
+
+const byInteractionsCountAndAlphabetically = (a: string, b: string) =>
+  a.split('.').length - b.split('.').length || a.localeCompare(b);
