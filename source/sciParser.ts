@@ -42,7 +42,7 @@ export class SciParser {
   }
 
   public validSequences(coverageN: number = 0): string[] {
-    const shortestValidSequence = this.generate(this.tokensValidSequences)[0];
+    const shortestValidSequence = this.generate(this.tokensValidSequences, 0)[0];
     const minValidSequenceLength: number = this.countInteractions(shortestValidSequence);
     const maxRepetitions = coverageN ? coverageN - minValidSequenceLength + 1 : coverageN;
     const maxValidSequenceLength = minValidSequenceLength + coverageN;
