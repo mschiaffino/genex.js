@@ -99,6 +99,14 @@ describe('sci parser', () => {
       validSequences: ['O', 'O.C', 'O.C.C', 'O.C.C.C'],
       invalidSequences: ['C', 'C.C', 'C.O', 'O.O'],
     },
+    {
+      sci: 'O.C+',
+      validCoverageN: 3,
+      invalidCoverageN: 2,
+      symbols: ['C', 'O'],
+      validSequences: ['O.C', 'O.C.C', 'O.C.C.C'],
+      invalidSequences: ['C', 'O', 'C.C', 'C.O', 'O.O'],
+    },
   ];
 
   for (let tp of testParams) {
