@@ -104,7 +104,7 @@ describe('sci parser', () => {
       validCoverageN: 3,
       invalidCoverageN: 2,
       symbols: ['C', 'O'],
-      validSequences: ['O.C', 'O.C.C', 'O.C.C.C'],
+      validSequences: ['O.C', 'O.C.C', 'O.C.C.C', 'O.C.C.C.C'],
       invalidSequences: ['C', 'O', 'C.C', 'C.O', 'O.O'],
     },
 
@@ -115,6 +115,30 @@ describe('sci parser', () => {
       symbols: ['A'],
       validSequences: ['A', 'A.A', 'A.A.A', 'A.A.A.A'],
       invalidSequences: [],
+    },
+    {
+      sci: 'A.B.C+',
+      validCoverageN: 0,
+      invalidCoverageN: 1,
+      symbols: ['A', 'B', 'C'],
+      validSequences: ['A.B.C'],
+      invalidSequences: ['A', 'B', 'C'],
+    },
+    {
+      sci: 'A.B.C+',
+      validCoverageN: 1,
+      invalidCoverageN: 1,
+      symbols: ['A', 'B', 'C'],
+      validSequences: ['A.B.C', 'A.B.C.C'],
+      invalidSequences: ['A', 'B', 'C'],
+    },
+    {
+      sci: 'A.B.C+',
+      validCoverageN: 2,
+      invalidCoverageN: 2,
+      symbols: ['A', 'B', 'C'],
+      validSequences: ['A.B.C', 'A.B.C.C', 'A.B.C.C.C'],
+      invalidSequences: ['A', 'B', 'C', 'A.A', 'A.B', 'A.C', 'B.A', 'B.B', 'B.C', 'C.A', 'C.B', 'C.C'],
     },
   ];
 
