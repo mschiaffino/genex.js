@@ -9,12 +9,12 @@ import { Repetition } from './iterators/Repetition';
 import { Stack } from './iterators/Stack';
 
 export class SciParser {
-  static readonly operators = ['.', '|', '+', '*', '(', ')'];
+  readonly operators = ['.', '|', '+', '*', '(', ')'];
   readonly charset: number[];
   readonly rawSci: string = null;
   readonly sciRegex: RegExp = null;
   readonly sciRegexEscapedDots: RegExp = null;
-  readonly symbols: string[] = [];
+  readonly interactionSymbols: string[] = [];
   readonly tokensValidSequences: ret.Root = null;
   readonly tokensInvalidSequences: ret.Root = null;
   // TODO Calculate max repetitions based on coverage params
@@ -24,7 +24,7 @@ export class SciParser {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this._removeDots(sci));
     this.sciRegexEscapedDots = new RegExp(sci.replace(/\./g, '\\.'));
-    this.symbols = SciParser.interactionSymbols(sci);
+    this.interactionSymbols = this.extractInteractionSymbols();
 
     if (/[(][?]</.test(sci) === true) {
       throw new Error(`Unsupported lookbehind assertion.`);
@@ -35,21 +35,7 @@ export class SciParser {
       .map((value) => value.charCodeAt(0));
 
     this.tokensValidSequences = ret(this.sciRegex.source);
-    this.tokensInvalidSequences = ret(`(${this.symbols.join('|')})+`);
-  }
-
-  static interactionSymbols(sci: string): string[] {
-    const isNotEmptyString = (s: string) => s !== '';
-
-    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
-    const regexToSplitByOps = new RegExp(joinedOperators);
-
-    const hash: { [s: string]: boolean } = {};
-    sci.split(regexToSplitByOps).forEach((s) => (hash[s] = true));
-
-    const distinctSymbols: string[] = Object.keys(hash);
-
-    return distinctSymbols.filter(isNotEmptyString).sort(byInteractionsCountAndAlphabetically);
+    this.tokensInvalidSequences = ret(`(${this.interactionSymbols.join('|')})+`);
   }
 
   static interactionsCount(sequence: string) {
@@ -179,6 +165,20 @@ export class SciParser {
     }
 
     return result;
+  }
+
+  private extractInteractionSymbols(): string[] {
+    const isNotEmptyString = (s: string) => s !== '';
+
+    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
+    const regexToSplitByOps = new RegExp(joinedOperators);
+
+    const hash: { [s: string]: boolean } = {};
+    this.rawSci.split(regexToSplitByOps).forEach((s) => (hash[s] = true));
+
+    const distinctSymbols: string[] = Object.keys(hash);
+
+    return distinctSymbols.filter(isNotEmptyString).sort(byInteractionsCountAndAlphabetically);
   }
 
   private _removeDots(sci: string): string {
