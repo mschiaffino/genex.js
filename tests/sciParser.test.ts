@@ -13,7 +13,7 @@ describe('sci parser', () => {
   const testParams: TestParams[] = [
     {
       sci: 'O.C',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 2,
       symbols: ['C', 'O'],
       validSequences: ['O.C'],
@@ -21,7 +21,7 @@ describe('sci parser', () => {
     },
     {
       sci: 'O.Z.Z.C',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 2,
       symbols: ['C', 'O', 'Z'],
       validSequences: ['O.Z.Z.C'],
@@ -29,7 +29,7 @@ describe('sci parser', () => {
     },
     {
       sci: 'S|M',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 1,
       symbols: ['M', 'S'],
       validSequences: ['M', 'S'],
@@ -37,7 +37,7 @@ describe('sci parser', () => {
     },
     {
       sci: 'O.(S|M).C',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 2,
       symbols: ['C', 'M', 'O', 'S'],
       validSequences: ['O.M.C', 'O.S.C'],
@@ -66,7 +66,7 @@ describe('sci parser', () => {
     },
     {
       sci: 'Open.Close',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 2,
       symbols: ['Close', 'Open'],
       validSequences: ['Open.Close'],
@@ -74,7 +74,7 @@ describe('sci parser', () => {
     },
     {
       sci: 'Select|Move',
-      validCoverageN: null,
+      validCoverageN: 0,
       invalidCoverageN: 1,
       symbols: ['Move', 'Select'],
       validSequences: ['Move', 'Select'],
@@ -154,7 +154,7 @@ describe('sci parser', () => {
         });
       });
 
-      describe(`validSequences(${tp.validCoverageN || ''})`, () => {
+      describe(`validSequences(${tp.validCoverageN})`, () => {
         it(`should generate [${tp.validSequences.join(', ')}]`, () => {
           expect(validSequences).toEqual(tp.validSequences);
         });
@@ -169,7 +169,7 @@ describe('sci parser', () => {
         }
       });
 
-      describe(`invalidSequences(${tp.invalidCoverageN || ''})`, () => {
+      describe(`invalidSequences(${tp.invalidCoverageN})`, () => {
         it(`should generate [${tp.invalidSequences.join(', ')}]`, () => {
           expect(invalidSequences).toEqual(tp.invalidSequences);
         });
