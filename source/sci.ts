@@ -9,16 +9,23 @@ import { Reference } from './iterators/Reference';
 import { Repetition } from './iterators/Repetition';
 import { Stack } from './iterators/Stack';
 
+/**
+ * Represents a Sequence Constraint on the Interactions
+ */
 export class Sci {
-  readonly operators = ['.', '|', '+', '*', '(', ')'];
-  readonly charset: number[];
-  readonly rawSci: string = null;
-  readonly sciRegex: RegExp = null;
-  readonly sciRegexEscapedDots: RegExp = null;
-  readonly interactionSymbols: string[] = [];
-  readonly tokensValidSequences: ret.Root = null;
-  readonly tokensInvalidSequences: ret.Root = null;
+  static readonly operators = ['.', '|', '+', '*', '(', ')'];
+  private readonly charset: number[];
+  private readonly rawSci: string = null;
+  private readonly sciRegex: RegExp = null;
+  private readonly sciRegexEscapedDots: RegExp = null;
+  private readonly tokensValidSequences: ret.Root = null;
+  private readonly tokensInvalidSequences: ret.Root = null;
+  protected readonly interactionSymbols: string[] = [];
 
+  /**
+   * Represents a SCI (Sequence Constraint on the Interactions).
+   * @constructor
+   */
   constructor(sci: string) {
     this.rawSci = sci;
     this.sciRegex = new RegExp(this.removeDots(sci));
@@ -37,6 +44,12 @@ export class Sci {
     this.tokensInvalidSequences = ret(`(${this.interactionSymbols.join('|')})+`);
   }
 
+  /**
+   * Generates all the possible sequences derived from the grammar of length
+   * Base + n (coverageN parameter)
+   * @param coverageN Coverage criteria 'n' for valid sequences
+   * @returns Valid interaction sequences
+   */
   public validSequences(coverageN: number = 0): string[] {
     const shortestValidSequence = this.generate(this.tokensValidSequences, 1)[0];
     const minValidSequenceLength: number = this.countInteractions(shortestValidSequence);
@@ -48,6 +61,12 @@ export class Sci {
       .sort(byInteractionsCountAndAlphabetically);
   }
 
+  /**
+   * Generates all the possible sequences obtained from the combination of 'n'
+   * interactions on I (interactions symbols set) not dervided from the grammar.
+   * @param coverageN Coverage criteria 'n' for invalid sequences
+   * @returns Invalid interaction sequences
+   */
   public invalidSequences(coverageN: number = 1): string[] {
     return this.generate(this.tokensInvalidSequences, coverageN)
       .filter((s) => !this.isValidSequence(s))
@@ -55,13 +74,24 @@ export class Sci {
       .sort(byInteractionsCountAndAlphabetically);
   }
 
+  /**
+   * Checks if sequence is valid for the SCI.
+   * @param sequence Sequence of interactions to validate
+   * @returns {boolean} Whether the sequence is valid or not.
+   */
   public isValidSequence(sequence: string) {
     // RESET LAST INDEX WHEN TESTING WITH REUSED REGEX WITH GLOBAL FLAG
     this.sciRegexEscapedDots.lastIndex = 0;
     return this.sciRegexEscapedDots.test(this.removeDots(sequence));
   }
 
-  private generate(tokens: ret.Tokens, maxRepetitions = 0, callback?: (value: string) => boolean | void) {
+  /**
+   * Generates interaction sequences.
+   * @param tokens SCI tokens
+   * @param maxRepetitions Max number of times a quantifier can be repeated.
+   * @param callback
+   */
+  private generate(tokens: ret.Tokens, maxRepetitions = 0) {
     const groups: Stack[] = [];
 
     const generator = (tokens: ret.Tokens): Option | Reference | Literal | Stack => {
@@ -146,14 +176,6 @@ export class Sci {
 
     const values = generator(tokens) as Option | Stack;
 
-    if (typeof callback === 'function') {
-      for (let value of values) {
-        if (callback(value) === false) {
-          return null;
-        }
-      }
-    }
-
     const result = [];
 
     for (let value of values) {
@@ -163,10 +185,13 @@ export class Sci {
     return result;
   }
 
+  /**
+   * Returns the interaction symbols list.
+   */
   private extractInteractionSymbols(): string[] {
     const isNotEmptyString = (s: string) => s !== '';
 
-    const joinedOperators = this.operators.map((o) => `\\${o}`).join('|');
+    const joinedOperators = Sci.operators.map((o) => `\\${o}`).join('|');
     const regexToSplitByOps = new RegExp(joinedOperators);
 
     const hash: { [s: string]: boolean } = {};
@@ -177,18 +202,35 @@ export class Sci {
     return distinctSymbols.filter(isNotEmptyString).sort(byInteractionsCountAndAlphabetically);
   }
 
+  /**
+   * Returns the number if interactions in the sequence.
+   * @param sequence Sequence of interactions.
+   */
   private countInteractions(sequence: string) {
     return sequence.split('.').length;
   }
 
-  private removeDots(sci: string): string {
-    return sci.replace(/\./g, '');
+  /**
+   * Remove dots from a string
+   * @param s A string to remove the dots to.
+   */
+  private removeDots(s: string): string {
+    return s.replace(/\./g, '');
   }
 
+  /**
+   * Add dots to a string before capital letters.
+   * @param s A string to add the dots to.
+   */
   private addDots(s: string) {
     return s.split(/(?=[A-Z])/).join('.');
   }
 }
 
+/**
+ * Comparator to sort interaction sequence strings by length and alphabetically.
+ * @param a
+ * @param b
+ */
 const byInteractionsCountAndAlphabetically = (a: string, b: string) =>
   a.split('.').length - b.split('.').length || a.localeCompare(b);
