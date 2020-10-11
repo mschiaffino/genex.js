@@ -1,5 +1,7 @@
 # sci-parser
 
+Parser for strings representing Sequence Constraints on the Interactions.
+
 ## Install
 
 ```shell
@@ -9,33 +11,31 @@ npm i sci-parser --save
 ## Usage
 
 ```js
-const genex = require('genex');
-const pattern = genex(/(foo|bar|baz){1,2}|snafu/);
+import { SciParser } from 'sci-parser';
 
-// 13
-console.log(pattern.count());
+// Examples with valid SCI string.
+const sci = SciParser.parse('A.B.C+');
+sci.interactionSymbols;
+// => ['A', 'B', 'C']
 
-/*
-[
-  'foo', 'foofoo', 'foobar', 'foobaz',
-  'bar', 'barfoo', 'barbar', 'barbaz',
-  'baz', 'bazfoo', 'bazbar', 'bazbaz',
-  'snafu'
-]
-*/
-console.log(pattern.generate());
-```
+sci.validSequences(1);
+// => ['A.B.C', 'A.B.C.C']
 
-The `generate()` method also accepts an optional callback:
+sci.validSequences(2);
+// => ['A.B.C', 'A.B.C.C', 'A.B.C.C.C']
 
-```js
-pattern.generate((value) => {
-  if (value.startsWith('foo') !== true) {
-    return false; // breaks iteration
-  }
+sci.validSequences(1);
+// => ['A', 'B', 'C']
 
-  console.log(value); // 'foo', 'foofoo', 'foobar', 'foobaz',
-});
+sci.validSequences(2);
+// => ['A', 'B', 'C', 'A.A', 'A.B', 'A.C', 'B.A', 'B.B', 'B.C', 'C.A', 'C.B', 'C.C']
+
+// Examples with invalid SCI string.
+SciParser.isValid('A(');
+// => false
+
+SciParser.syntaxErrorMessage('A(');
+// => 'Invalid regular expression: /A(/: Unterminated group'
 ```
 
 ## License
