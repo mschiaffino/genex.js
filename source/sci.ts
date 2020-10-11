@@ -20,7 +20,7 @@ export class Sci {
   private readonly sciRegexEscapedDots: RegExp = null;
   private readonly tokensValidSequences: ret.Root = null;
   private readonly tokensInvalidSequences: ret.Root = null;
-  protected readonly interactionSymbols: string[] = [];
+  public readonly interactionSymbols: string[] = [];
 
   /**
    * Represents a SCI (Sequence Constraint on the Interactions).
