@@ -24,10 +24,10 @@ sci.validSequences(1);
 sci.validSequences(2);
 // => ['A.B.C', 'A.B.C.C', 'A.B.C.C.C']
 
-sci.validSequences(1);
+sci.invalidSequences(1);
 // => ['A', 'B', 'C']
 
-sci.validSequences(2);
+sci.invalidSequences(2);
 // => ['A', 'B', 'C', 'A.A', 'A.B', 'A.C', 'B.A', 'B.B', 'B.C', 'C.A', 'C.B', 'C.C']
 
 // Examples with invalid SCI string.
