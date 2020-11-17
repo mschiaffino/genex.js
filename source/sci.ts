@@ -223,7 +223,9 @@ export class Sci {
    * @param s A string to add the dots to.
    */
   private addDots(s: string) {
-    return s.split(/(?=[A-Z])/).join('.');
+    // The regex splits the string by interaction symbols
+    const splitterRegex = new RegExp('(?=' + this.interactionSymbols.join('|') + ')', 'g');
+    return s.split(splitterRegex).join('.');
   }
 }
 

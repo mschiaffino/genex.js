@@ -140,6 +140,14 @@ describe('Sci', () => {
       validSequences: ['A.B.C', 'A.B.C.C', 'A.B.C.C.C'],
       invalidSequences: ['A', 'B', 'C', 'A.A', 'A.B', 'A.C', 'B.A', 'B.B', 'B.C', 'C.A', 'C.B', 'C.C'],
     },
+    {
+      sci: 'a.b*',
+      validCoverageN: 2,
+      invalidCoverageN: 2,
+      symbols: ['a', 'b'],
+      validSequences: ['a', 'a.b', 'a.b.b'],
+      invalidSequences: ['b', 'a.a', 'b.a', 'b.b'],
+    },
   ];
 
   for (let tp of testParams) {
