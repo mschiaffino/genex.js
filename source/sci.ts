@@ -54,7 +54,11 @@ export class Sci {
     const shortestValidSequence = this.generate(this.tokensValidSequences, 1)[0];
     const minValidSequenceLength: number = this.countInteractions(shortestValidSequence);
     const maxValidSequenceLength = minValidSequenceLength + coverageN;
-    const maxRepetitions = maxValidSequenceLength - minValidSequenceLength + 1;
+    let maxRepetitions = maxValidSequenceLength - minValidSequenceLength;
+
+    if (this.rawSci.includes('+')) {
+      maxRepetitions += 1;
+    }
 
     return this.generate(this.tokensValidSequences, maxRepetitions)
       .filter((s) => this.countInteractions(s) <= maxValidSequenceLength)
